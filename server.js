@@ -28,8 +28,15 @@ var schema = buildSchema(`
     getPostFromExternalAPI:[Post]
     message:String
   }
+  input UserInput{
+    name:String!
+    age:Int!
+    location:String!
+  }
+
   type Mutation{
     setMessage(newMessage:String):String
+    createUser(user: UserInput): User
   }
 `);
 
@@ -76,6 +83,14 @@ var root = {
     return message
   },
   message:()=> message,
+
+  createUser: (args) =>{
+    console.log(args)
+    //create new user inside db ir api
+    //The below object is the new item
+    return args.user
+
+  }
 };
 
 var app = express();
