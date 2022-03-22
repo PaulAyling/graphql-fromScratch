@@ -1,38 +1,65 @@
-var express = require('express');
-var { graphqlHTTP } = require('express-graphql');
-var { buildSchema } = require('graphql');
-
-const books = [
-	{ id: 1, name: 'Harry Potter and the Chamber of Secrets', authorId: 1 },
-	{ id: 2, name: 'Harry Potter and the Prisoner of Azkaban', authorId: 1 },
-	{ id: 3, name: 'Harry Potter and the Goblet of Fire', authorId: 1 },
-	{ id: 4, name: 'The Fellowship of the Ring', authorId: 2 },
-	{ id: 5, name: 'The Two Towers', authorId: 2 },
-	{ id: 6, name: 'The Return of the King', authorId: 2 },
-	{ id: 7, name: 'The Way of Shadows', authorId: 3 },
-	{ id: 8, name: 'Beyond the Shadows', authorId: 3 }
-]
-
+var express = require("express");
+var { graphqlHTTP } = require("express-graphql");
+var { buildSchema } = require("graphql");
 
 // Construct a schema, using GraphQL schema language
 var schema = buildSchema(`
+  type User {
+    name: String,
+    age: Int,
+    location: String
+  }
+
   type Query {
-    hello: String
+    hello: String,
+    welcomeMessage(name: String,dayOfWeek: String):String,
+    getUser:User
+    getUsers:[User]
   }
 `);
 
 // The root provides a resolver function for each API endpoint
 var root = {
   hello: () => {
-    return 'Hello world!';
+    return "Hello world!";
+  },
+  welcomeMessage: (args) => {
+    console.log(args);
+    return `He hows trix ${args.name}? on this fine ${args.dayOfWeek}`;
+  },
+  getUser: () => {
+    const user = {
+      name: "Bob",
+      age: 34,
+      location: "Oslo",
+    };
+    return user;
+  },
+  getUsers: () => {
+    const users = [
+      {
+        name: "George",
+        age: 29,
+        location: "london",
+      },
+      {
+        name: "Jenny",
+        age: 56,
+        location: "Oslo",
+      },
+    ];
+    return users
   },
 };
 
 var app = express();
-app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  rootValue: root,
-  graphiql: true,
-}));
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true,
+  })
+);
 app.listen(4000);
-console.log('Running a GraphQL API server at http://localhost:4000/graphql');
+console.log("Running a GraphQL API server at http://localhost:4000/graphql");
