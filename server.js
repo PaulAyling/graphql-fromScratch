@@ -1,9 +1,17 @@
 var express = require("express");
 var { graphqlHTTP } = require("express-graphql");
 var { buildSchema } = require("graphql");
+var axios = require('axios')
 
 // Construct a schema, using GraphQL schema language
 var schema = buildSchema(`
+  type Post {
+    userId:Int,
+    id:Int,
+    title:String,
+    body:String
+  }
+
   type User {
     name: String,
     age: Int,
@@ -15,6 +23,7 @@ var schema = buildSchema(`
     welcomeMessage(name: String,dayOfWeek: String):String,
     getUser:User
     getUsers:[User]
+    getPostFromExternalAPI:[Post]
   }
 `);
 
@@ -50,6 +59,12 @@ var root = {
     ];
     return users
   },
+  getPostFromExternalAPI:async ()=>{
+
+    // return axios.get('https://jsonplaceholder.typicode.com/posts').then(result=>result.data)
+    const result = await axios.get('https://jsonplaceholder.typicode.com/posts')
+    return result.data
+  }
 };
 
 var app = express();

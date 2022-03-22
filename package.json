@@ -8,6 +8,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "axios": "^0.26.1",
     "express": "^4.17.3",
     "express-graphql": "^0.12.0",
     "graphql": "^15.8.0"
